@@ -29,7 +29,6 @@ name: Build and deploy a container to an Azure Web App
 env:
   AZURE_WEBAPP_NAME: mysuperset  # set this to the name of your Azure Web App
   AZURE_CONTAINER_REGISTRY: supersetregistry
-  WORKING_DIRECTORY: 
   
 on:
   push:
@@ -60,7 +59,6 @@ jobs:
         
       - name: Build and push container image to registry
         uses: docker/build-push-action@v5
-        #uses: docker/setup-buildx-action@v1
         with:
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
@@ -70,10 +68,6 @@ jobs:
             SUPERSET_SECRET_KEY=${{ secrets.SUPERSET_SECRET_KEY }}
             USERNAME_ADMIN=${{ secrets.USERNAME_ADMIN }}
             PASSWORD_ADMIN=${{ secrets.PASSWORD_ADMIN }}
-         # RUN: |
-         #   docker compose -f superset-compose.yaml build
-         #   docker tag superset ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
-         #   docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
      
   deploy:
     permissions:
