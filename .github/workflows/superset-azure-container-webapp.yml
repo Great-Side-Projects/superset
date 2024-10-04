@@ -66,6 +66,7 @@ jobs:
           PASSWORD_ADMIN: ${{ secrets.PASSWORD_ADMIN }}
         with:
           push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
           RUN: |
             docker compose -f superset-compose.yaml build
             docker compose -f superset-compose.yaml push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
