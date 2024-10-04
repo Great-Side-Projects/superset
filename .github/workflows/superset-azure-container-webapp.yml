@@ -36,6 +36,8 @@ on:
     paths-ignore:
       - 'README.md'
       - '.env'
+      - 'images/**'
+            
   workflow_dispatch:
     
 
