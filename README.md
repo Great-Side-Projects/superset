@@ -89,7 +89,7 @@ The architecture design is based in Azure cloud services, the project is deploye
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Architecture diagram
-[![Architecture diagram][architecture-diagram]](https://authsp.azurewebsites.net/)
+[![Architecture diagram][architecture-diagram]](https://mysuperset.azurewebsites.net/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
