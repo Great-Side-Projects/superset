@@ -64,13 +64,13 @@ jobs:
           SUPERSET_SECRET_KEY: ${{ secrets.SUPERSET_SECRET_KEY }}
           USERNAME_ADMIN: ${{ secrets.USERNAME_ADMIN }}
           PASSWORD_ADMIN: ${{ secrets.PASSWORD_ADMIN }}
-        with:
-          push: true
-          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
-          file: superset-compose.yaml
+        #with:
+        #  push: true
+        #  tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+        #  file: superset-compose.yaml
           RUN: |
             docker compose -f superset-compose.yaml build
-            docker compose -f superset-compose.yaml push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+            docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
      
   deploy:
     permissions:
