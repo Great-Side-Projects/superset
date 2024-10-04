@@ -64,14 +64,14 @@ jobs:
           SUPERSET_SECRET_KEY: ${{ secrets.SUPERSET_SECRET_KEY }}
           USERNAME_ADMIN: ${{ secrets.USERNAME_ADMIN }}
           PASSWORD_ADMIN: ${{ secrets.PASSWORD_ADMIN }}
-        #with:
-        #  push: true
-        #  tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
-        #  file: superset-compose.yaml
-          RUN: |
-            docker compose -f superset-compose.yaml build
-            docker tag superset ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
-            docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+        with:
+          push: true
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+          file: Dockerfile
+        #  RUN: |
+        #    docker compose -f superset-compose.yaml build
+        #    docker tag superset ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+        #    docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
      
   deploy:
     permissions:
@@ -94,4 +94,5 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
           slot-name: 'production'
+          configuration-file: 'superset-compose.yaml'
           
