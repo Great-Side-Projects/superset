@@ -1,6 +1,3 @@
-# superset
-superset implementation with azure app services
-
 <a name="readme-top"></a>
 
 
