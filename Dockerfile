@@ -20,6 +20,9 @@ ENV SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
 ENV USERNAME_ADMIN=${USERNAME_ADMIN}
 ENV PASSWORD_ADMIN=${PASSWORD_ADMIN}
 
+# Copia el archivo de configuración de Superset (opcional si tienes uno personalizado)
+COPY ./superset_config.py /app/pythonpath/superset_config.py
+
 # Vuelve a cambiar a usuario "superset" para cumplir con las recomendaciones de seguridad
 USER superset
 
