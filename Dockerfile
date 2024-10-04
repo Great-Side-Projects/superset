@@ -19,6 +19,8 @@ ENV SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
 ENV SQLALCHEMY_DATABASE_URI=${SQLALCHEMY_DATABASE_URI}
 ENV USERNAME_ADMIN=${USERNAME_ADMIN}
 ENV PASSWORD_ADMIN=${PASSWORD_ADMIN}
+ENV SUPERSET_LOAD_EXAMPLES=no
+ENV SERVER_WORKER_AMOUNT=4
 
 # Copia el archivo de configuración de Superset (opcional si tienes uno personalizado)
 COPY ./superset_config.py /app/pythonpath/superset_config.py
