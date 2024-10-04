@@ -27,12 +27,19 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: your-app-name  # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: superset  # set this to the name of your Azure Web App
+  AZURE_CONTAINER_REGISTRY: supersetregistry
+  WORKING_DIRECTORY: 
+  DOCKER_COMPOSE_FILE: superset-compose.yaml
 
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - '.env'
   workflow_dispatch:
+    
 
 permissions:
   contents: read
@@ -44,26 +51,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
-      - name: Log in to GitHub container registry
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+      - name: Azure Login registry
+        uses: docker/login-action@v2.2.0
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+            registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+            username: ${{ secrets.SUPERSET_REGISTRY_USERNAME }}
+            password: ${{ secrets.SUPERSET_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
-        with:
-          push: true
-          tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: ./Dockerfile
-
+        uses: docker/build-push-action@v5
+        env:
+          SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
+          SUPERSET_SECRET_KEY: ${{ secrets.SUPERSET_SECRET_KEY }}
+          USERNAME_ADMIN: ${{ secrets.USERNAME_ADMIN }}
+          PASSWORD_ADMIN: ${{ secrets.PASSWORD_ADMIN }}
+        #with:
+        #  context: ./${{ env.WORKING_DIRECTORY }}
+     
+          RUN: |
+            docker compose -f superset-compose.yaml build
+            docker compose -f superset-compose.yaml push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+     
   deploy:
     permissions:
       contents: none
@@ -83,4 +91,5 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: 'ghcr.io/${{ env.REPO }}:${{ github.sha }}'
+          images: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
+          slot-name: 'production'

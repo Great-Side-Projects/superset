@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  superset:
+    #image: apache/superset:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: superset
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+      SUPERSET_LOAD_EXAMPLES: no # Puedes poner "yes" si quieres ejemplos
+      SERVER_WORKER_AMOUNT: 4
+      SQLALCHEMY_DATABASE_URI: ${SQLALCHEMY_DATABASE_URI}
+    volumes:
+      - ./superset_config.py:/app/pythonpath/superset_config.py
+    ports:
+      - 18088:8088
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Initializing Superset..."
+         superset db upgrade  # upgrade the database
+         superset fab create-admin --username ${USERNAME_ADMIN} --firstname Superset --lastname Admin --email admin@example.com --password ${PASSWORD_ADMIN} || true
+         superset init  # initialize superset environment
+         # Starting server
+        /bin/sh -c /usr/bin/run-server.sh
