@@ -30,8 +30,7 @@ env:
   AZURE_WEBAPP_NAME: superset  # set this to the name of your Azure Web App
   AZURE_CONTAINER_REGISTRY: supersetregistry
   WORKING_DIRECTORY: 
-  DOCKER_COMPOSE_FILE: superset-compose.yaml
-
+  
 on:
   push:
     branches: [ "main" ]
@@ -65,9 +64,8 @@ jobs:
           SUPERSET_SECRET_KEY: ${{ secrets.SUPERSET_SECRET_KEY }}
           USERNAME_ADMIN: ${{ secrets.USERNAME_ADMIN }}
           PASSWORD_ADMIN: ${{ secrets.PASSWORD_ADMIN }}
-        #with:
-        #  context: ./${{ env.WORKING_DIRECTORY }}
-     
+        with:
+          push: true
           RUN: |
             docker compose -f superset-compose.yaml build
             docker compose -f superset-compose.yaml push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
@@ -93,3 +91,4 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
           slot-name: 'production'
+          
