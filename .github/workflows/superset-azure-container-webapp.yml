@@ -27,7 +27,7 @@
 name: Build and deploy a container to an Azure Web App
 
 env:
-  AZURE_WEBAPP_NAME: superset  # set this to the name of your Azure Web App
+  AZURE_WEBAPP_NAME: mysuperset  # set this to the name of your Azure Web App
   AZURE_CONTAINER_REGISTRY: supersetregistry
   WORKING_DIRECTORY: 
   
@@ -70,6 +70,7 @@ jobs:
         #  file: superset-compose.yaml
           RUN: |
             docker compose -f superset-compose.yaml build
+            docker tag superset ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
             docker push ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.AZURE_WEBAPP_NAME }}:${{ github.sha }}
      
   deploy:
